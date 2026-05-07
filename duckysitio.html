@@ -854,25 +854,54 @@
             render();
         }
 
-        function devolverLibro(index) {
-
-            let reserva = reservas[index];
+        function devolverLibro(nombreUsuario, nombreLibro) {
 
             let libro = libros.find(l =>
-                l.titulo === reserva.libro
+                l.titulo === nombreLibro
             );
 
-            libro.disp++;
+            if (libro) {
 
-            libro.estado = "Disponible";
+                libro.disp++;
+
+                libro.estado = "Disponible";
+            }
+
+            /* ELIMINAR RESERVA GLOBAL */
+            reservas = reservas.filter(r =>
+                !(r.usuario === nombreUsuario &&
+                    r.libro === nombreLibro)
+            );
+
+            /* BUSCAR USUARIO */
+            let usuario = usuarios.find(u =>
+                u.name === nombreUsuario
+            );
+
+            if (usuario) {
+
+                usuario.historial =
+                    usuario.historial.filter(h =>
+                        h.libro !== nombreLibro
+                    );
+            }
+
+            /* ACTUALIZAR SESION ACTUAL */
+            if (usuarioActual.name === nombreUsuario) {
+
+                usuarioActual.historial =
+                    usuarioActual.historial.filter(h =>
+                        h.libro !== nombreLibro
+                    );
+            }
 
             agregarNotificacion(
-                `Devolución registrada: ${libro.titulo}`
+                `Devolución registrada: ${nombreLibro}`
             );
 
-            agregarBitacora(`Devolvió el libro ${libro.titulo}`);
-
-            reservas.splice(index, 1);
+            agregarBitacora(
+                `Devolvió el libro ${nombreLibro}`
+            );
 
             guardarTodo();
 
@@ -886,49 +915,99 @@
 
             cont.innerHTML = "";
 
-            usuarios.forEach(u => {
+            /* ADMIN VE TODO */
+            if (usuarioActual.rol === "admin") {
 
-                cont.innerHTML += `
+                usuarios.forEach(u => {
 
-                <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 mb-5">
+                    cont.innerHTML += `
 
-                    <h2 class="text-2xl font-bold mb-4 text-gray-800">
-                        ${u.name}
-                    </h2>
+            <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 mb-5">
 
-                    ${u.historial.length === 0
-                        ? `<p class="text-gray-500">No tiene préstamos.</p>`
-                        : ""}
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">
+                    ${u.name}
+                </h2>
 
-                    ${u.historial.map(h => `
+                ${u.historial.length === 0
+                            ? `<p class="text-gray-500">No tiene préstamos.</p>`
+                            : ""
+                        }
 
-                        <div class="border p-4 rounded-2xl mb-3 bg-gray-50">
+                ${u.historial.map(h => `
 
-                            <h3 class="font-bold text-lg text-gray-800">
-                                ${h.libro}
-                            </h3>
+                    <div class="border p-4 rounded-2xl mb-3 bg-gray-50">
 
-                            <p class="mt-2 text-gray-600">
-                                Inicio: ${h.inicio}
-                            </p>
+                        <h3 class="font-bold text-lg text-gray-800">
+                            ${h.libro}
+                        </h3>
 
-                            <p class="text-gray-600">
-                                Fin: ${h.fin}
-                            </p>
+                        <p class="mt-2 text-gray-600">
+                            Inicio: ${h.inicio}
+                        </p>
 
-                            <button onclick="devolverLibro(${reservas.findIndex(r => r.libro === h.libro)})"
-                                class="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-xl mt-4 shadow">
-                                <i class="fa-solid fa-check"></i>
-                                Devolver
-                            </button>
+                        <p class="text-gray-600">
+                            Fin: ${h.fin}
+                        </p>
 
-                        </div>
+                        <button onclick="devolverLibro('${u.name}','${h.libro}')"
+                            class="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-xl mt-4 shadow">
 
-                    `).join("")}
+                            <i class="fa-solid fa-check"></i>
+                            Devolver
+
+                        </button>
+
+                    </div>
+
+                `).join("")}
+
+            </div>
+            `;
+                });
+
+            }
+
+            /* ALUMNO / MAESTRO SOLO VE LO SUYO */
+            else {
+
+                let historial = usuarioActual.historial;
+
+                cont.innerHTML = `
+
+        <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100">
+
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">
+                Mis Préstamos
+            </h2>
+
+            ${historial.length === 0
+                        ? `<p class="text-gray-500">No tienes préstamos.</p>`
+                        : ""
+                    }
+
+            ${historial.map(h => `
+
+                <div class="border p-4 rounded-2xl mb-3 bg-gray-50">
+
+                    <h3 class="font-bold text-lg text-gray-800">
+                        ${h.libro}
+                    </h3>
+
+                    <p class="mt-2 text-gray-600">
+                        Inicio: ${h.inicio}
+                    </p>
+
+                    <p class="text-gray-600">
+                        Fin: ${h.fin}
+                    </p>
 
                 </div>
-                `;
-            });
+
+            `).join("")}
+
+        </div>
+        `;
+            }
         }
 
         function renderReportes() {
