@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ducky University</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen font-sans">
+
+    <!-- LOGIN -->
+    <div id="login" class="flex items-center justify-center h-screen">
+
+        <div class="bg-white p-10 rounded-3xl shadow-2xl w-96 border border-gray-100">
+
+            <div class="text-center mb-6">
+
+                <i class="fa-solid fa-book text-5xl text-amber-600 mb-4"></i>
+
+                <h1 class="text-3xl font-bold text-gray-800">
+                    Ducky University
+                </h1>
+
+                <p class="text-gray-500 mt-2">
+                    Sistema Biblioteca Inteligente
+                </p>
+
+            </div>
+
+            <input id="user" placeholder="Usuario"
+                class="border p-3 w-full mb-3 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none">
+
+            <input id="pass" type="password" placeholder="Contraseña"
+                class="border p-3 w-full mb-4 rounded-xl focus:ring-2 focus:ring-amber-400 outline-none">
+
+            <button onclick="login()"
+                class="bg-amber-600 hover:bg-amber-700 transition text-white w-full py-3 rounded-xl font-semibold shadow-lg">
+                Iniciar Sesión
+            </button>
+
+            <div class="mt-5 text-sm text-gray-500 text-center">
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- APP -->
+    <div id="app" class="hidden">
+
+        <!-- NAVBAR -->
+        <div class="bg-white shadow-lg px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+
+            <div class="flex items-center gap-6">
+
+                <h1 class="font-bold text-2xl text-amber-700 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open"></i>
+                    Ducky University
+                </h1>
+
+                <button onclick="mostrar('dashboard')" class="hover:text-amber-600 transition">
+                    Inicio
+                </button>
+
+                <button onclick="mostrar('usuarios')" class="hover:text-amber-600 transition">
+                    Usuarios
+                </button>
+
+                <button onclick="mostrar('catalogo')" class="hover:text-amber-600 transition">
+                    Catálogo
+                </button>
+
+                <button onclick="mostrar('prestamos')" class="hover:text-amber-600 transition">
+                    Préstamos
+                </button>
+
+                <button onclick="mostrar('reportes')" class="hover:text-amber-600 transition">
+                    Reportes
+                </button>
+
+                <button id="btnBitacora" onclick="mostrar('bitacora')" class="hover:text-amber-600 transition hidden">
+                    Bitácora
+                </button>
+
+            </div>
+
+            <div class="flex items-center gap-5">
+
+                <div class="relative">
+
+                    <button onclick="toggleNotificaciones()"
+                        class="relative bg-amber-100 px-4 py-2 rounded-xl hover:bg-amber-200 transition shadow">
+
+                        <i class="fa-solid fa-bell text-amber-700"></i>
+
+                        <span id="contadorNotif"
+                            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                            0
+                        </span>
+
+                    </button>
+
+                    <div id="panelNotif"
+                        class="hidden absolute right-0 mt-3 w-80 bg-white rounded-3xl shadow-2xl p-4 z-50 max-h-96 overflow-y-auto border border-gray-100">
+
+                        <h2 class="font-bold text-lg mb-3 text-gray-700">
+                            Notificaciones
+                        </h2>
+
+                        <div id="listaNotificaciones"></div>
+
+                    </div>
+
+                </div>
+
+                <span id="nombreUser" class="font-semibold text-gray-700"></span>
+
+                <button onclick="logout()"
+                    class="bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl shadow">
+                    Cerrar sesión
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="p-6">
+
+            <!-- DASHBOARD -->
+            <div id="dashboard">
+
+                <div class="grid md:grid-cols-4 gap-5 mb-8">
+
+                    <div
+                        class="bg-white p-6 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
+                        <p class="text-gray-500">Total Libros</p>
+                        <h2 id="totalLibros" class="text-4xl font-bold text-amber-700 mt-2"></h2>
+                    </div>
+
+                    <div
+                        class="bg-white p-6 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
+                        <p class="text-gray-500">Disponibles</p>
+                        <h2 id="dispLibros" class="text-4xl font-bold text-green-600 mt-2"></h2>
+                    </div>
+
+                    <div
+                        class="bg-white p-6 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
+                        <p class="text-gray-500">Préstamos</p>
+                        <h2 id="totalPrestamos" class="text-4xl font-bold text-blue-600 mt-2"></h2>
+                    </div>
+
+                    <div
+                        class="bg-white p-6 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100">
+                        <p class="text-gray-500">Usuarios</p>
+                        <h2 id="totalUsuarios" class="text-4xl font-bold text-purple-600 mt-2"></h2>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- USUARIOS -->
+            <div id="usuarios" class="hidden">
+
+                <h2 class="text-3xl font-bold mb-5 text-gray-800">
+                    Gestión de Usuarios
+                </h2>
+
+                <div id="panelCrearUsuario"></div>
+
+                <div id="listaUsuarios" class="mt-5"></div>
+
+            </div>
+
+            <!-- CATALOGO -->
+            <div id="catalogo" class="hidden">
+
+                <div id="panelLibros"></div>
+
+                <input id="busqueda" placeholder="Buscar libro..." onkeyup="buscar()"
+                    class="border p-4 w-full mb-6 rounded-2xl shadow-sm focus:ring-2 focus:ring-amber-400 outline-none">
+
+                <div id="listaLibros" class="grid md:grid-cols-3 gap-5"></div>
+
+            </div>
+
+            <!-- PRESTAMOS -->
+            <div id="prestamos" class="hidden">
+
+                <h2 class="text-3xl font-bold mb-5 text-gray-800">
+                    Historial de Préstamos
+                </h2>
+
+                <div id="tablaPrestamos"></div>
+
+            </div>
+
+            <!-- REPORTES -->
+            <div id="reportes" class="hidden">
+
+                <h2 class="text-3xl font-bold mb-5 text-gray-800">
+                    Reportes
+                </h2>
+
+                <div id="tablaReportes"></div>
+
+            </div>
+
+            <!-- BITACORA -->
+            <div id="bitacora" class="hidden">
+
+                <h2 class="text-3xl font-bold mb-5 text-gray-800">
+                    Bitácora del Sistema
+                </h2>
+
+                <div id="tablaBitacora"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL -->
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-96 border border-gray-100">
+
+            <h2 class="font-bold text-2xl mb-5 text-gray-800">
+                Reservar Libro
+            </h2>
+
+            <input id="fInicio" type="date" class="border p-3 w-full mb-3 rounded-xl">
+
+            <input id="fFin" type="date" class="border p-3 w-full mb-5 rounded-xl">
+
+            <button onclick="confirmarReserva()"
+                class="bg-green-600 hover:bg-green-700 transition text-white w-full py-3 rounded-xl font-semibold">
+                Confirmar Reserva
+            </button>
+
+            <button onclick="cerrarModal()"
+                class="bg-gray-400 hover:bg-gray-500 transition text-white w-full py-3 rounded-xl mt-3">
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        let libros = JSON.parse(localStorage.getItem("libros")) || [
+            {
+                id: 1,
+                titulo: "Clean Code",
+                genero: "Programación",
+                disp: 3,
+                estado: "Disponible"
+            },
+            {
+                id: 2,
+                titulo: "Design Patterns",
+                genero: "Software",
+                disp: 2,
+                estado: "Disponible"
+            },
+            {
+                id: 3,
+                titulo: "Refactoring",
+                genero: "Tecnología",
+                disp: 1,
+                estado: "Disponible"
+            }
+        ];
+
+        let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [
+            {
+                id: 1,
+                name: "admin",
+                password: "1234",
+                rol: "admin",
+
+                permisos: {
+                    administrarLibros: true,
+                    administrarUsuarios: true,
+                    verReportes: true,
+                    reservar: true
+                },
+
+                historial: []
+            }
+        ];
+
+        let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
+
+        let notificaciones = JSON.parse(localStorage.getItem("notificaciones")) || [];
+
+        let bitacora = JSON.parse(localStorage.getItem("bitacora")) || [];
+
+        let usuarioActual = null;
+        let libroSel = null;
+
+        function guardarTodo() {
+
+            localStorage.setItem("usuarios",
+                JSON.stringify(usuarios));
+
+            localStorage.setItem("libros",
+                JSON.stringify(libros));
+
+            localStorage.setItem("reservas",
+                JSON.stringify(reservas));
+
+            localStorage.setItem("notificaciones",
+                JSON.stringify(notificaciones));
+
+            localStorage.setItem("bitacora",
+                JSON.stringify(bitacora));
+        }
+
+        function login() {
+
+            let nombre =
+                document.getElementById("user").value;
+
+            let pass =
+                document.getElementById("pass").value;
+
+            let encontrado = usuarios.find(u =>
+                u.name === nombre &&
+                u.password === pass
+            );
+
+            if (!encontrado) {
+                alert("Usuario o contraseña incorrectos");
+                return;
+            }
+
+            usuarioActual = encontrado;
+
+            if (usuarioActual.rol === "admin") {
+
+                document.getElementById("btnBitacora")
+                    .classList.remove("hidden");
+            }
+
+            document.getElementById("login")
+                .classList.add("hidden");
+
+            document.getElementById("app")
+                .classList.remove("hidden");
+
+            document.getElementById("nombreUser")
+                .innerText = `${usuarioActual.name} (${usuarioActual.rol})`;
+
+            render();
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        function agregarNotificacion(texto) {
+
+            notificaciones.unshift({
+
+                mensaje: texto,
+
+                fecha: new Date().toLocaleString(),
+
+                usuario: usuarioActual.name
+
+            });
+
+            guardarTodo();
+
+            renderNotificaciones();
+        }
+
+        function agregarBitacora(accion) {
+
+            bitacora.unshift({
+
+                usuario: usuarioActual.name,
+
+                accion: accion,
+
+                fecha: new Date().toLocaleString()
+
+            });
+
+            guardarTodo();
+
+            renderBitacora();
+        }
+
+        function renderNotificaciones() {
+
+            let cont = document.getElementById("listaNotificaciones");
+
+            let contador = document.getElementById("contadorNotif");
+
+            cont.innerHTML = "";
+
+            let propias = notificaciones.filter(n =>
+                n.usuario === usuarioActual.name
+            );
+
+            contador.innerText = propias.length;
+
+            if (propias.length === 0) {
+
+                cont.innerHTML = `
+                <p class="text-gray-500 text-sm">
+                No tienes notificaciones.
+                </p>`;
+
+                return;
+            }
+
+            propias.forEach(n => {
+
+                cont.innerHTML += `
+
+                <div class="border-b py-3">
+
+                    <p class="text-sm text-gray-700">
+                        ${n.mensaje}
+                    </p>
+
+                    <p class="text-xs text-gray-400 mt-1">
+                        ${n.fecha}
+                    </p>
+
+                </div>
+                `;
+
+            });
+        }
+
+        function toggleNotificaciones() {
+
+            document.getElementById("panelNotif")
+                .classList.toggle("hidden");
+        }
+
+        function mostrar(sec) {
+
+            [
+                "dashboard",
+                "usuarios",
+                "catalogo",
+                "prestamos",
+                "reportes",
+                "bitacora"
+            ].forEach(s => {
+
+                document.getElementById(s)
+                    .classList.add("hidden");
+            });
+
+            document.getElementById(sec)
+                .classList.remove("hidden");
+        }
+
+        function renderDashboard() {
+
+            document.getElementById("totalLibros")
+                .innerText = libros.length;
+
+            document.getElementById("dispLibros")
+                .innerText = libros.filter(l => l.disp > 0).length;
+
+            document.getElementById("totalPrestamos")
+                .innerText = reservas.length;
+
+            document.getElementById("totalUsuarios")
+                .innerText = usuarios.length;
+        }
+
+        function renderUsuarios() {
+
+            let panel =
+                document.getElementById("panelCrearUsuario");
+
+            let lista =
+                document.getElementById("listaUsuarios");
+
+            lista.innerHTML = "";
+
+            if (!usuarioActual.permisos.administrarUsuarios) {
+
+                panel.innerHTML = `
+                <div class="bg-red-100 text-red-700 p-5 rounded-2xl shadow">
+                    No tienes permisos para administrar usuarios.
+                </div>`;
+
+                return;
+            }
+
+            panel.innerHTML = `
+
+            <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 mb-6">
+
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">
+                    Crear Usuario
+                </h2>
+
+                <input id="nuevoNombre"
+                    placeholder="Nombre"
+                    class="border p-3 rounded-xl w-full mb-3">
+
+                <input id="nuevoPass"
+                    placeholder="Contraseña"
+                    class="border p-3 rounded-xl w-full mb-3">
+
+                <select id="nuevoRol"
+                    class="border p-3 rounded-xl w-full mb-4">
+
+                    <option value="alumno">Alumno</option>
+                    <option value="maestro">Maestro</option>
+
+                </select>
+
+                <button onclick="crearUsuario()"
+                    class="bg-blue-600 hover:bg-blue-700 transition text-white px-5 py-3 rounded-xl shadow-lg">
+                    Crear Usuario
+                </button>
+
+            </div>
+            `;
+
+            usuarios.forEach(u => {
+
+                lista.innerHTML += `
+
+                <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 mb-5">
+
+                    <div class="flex justify-between items-center mb-4">
+
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">
+                                ${u.name}
+                            </h2>
+
+                            <p class="text-gray-500 mt-1">
+                                Rol: ${u.rol}
+                            </p>
+                        </div>
+
+                        <button onclick="eliminarUsuario(${u.id})"
+                            class="bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl shadow">
+                            Eliminar
+                        </button>
+
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-3">
+
+                        <label>
+                            <input type="checkbox"
+                                ${u.permisos.reservar ? "checked" : ""}
+                                onchange="togglePermiso(${u.id}, 'reservar')">
+                            Reservar
+                        </label>
+
+                        <label>
+                            <input type="checkbox"
+                                ${u.permisos.verReportes ? "checked" : ""}
+                                onchange="togglePermiso(${u.id}, 'verReportes')">
+                            Ver Reportes
+                        </label>
+
+                        <label>
+                            <input type="checkbox"
+                                ${u.permisos.administrarLibros ? "checked" : ""}
+                                onchange="togglePermiso(${u.id}, 'administrarLibros')">
+                            Administrar Libros
+                        </label>
+
+                        <label>
+                            <input type="checkbox"
+                                ${u.permisos.administrarUsuarios ? "checked" : ""}
+                                onchange="togglePermiso(${u.id}, 'administrarUsuarios')">
+                            Administrar Usuarios
+                        </label>
+
+                    </div>
+
+                </div>
+                `;
+            });
+        }
+
+        function crearUsuario() {
+
+            let nombre =
+                document.getElementById("nuevoNombre").value;
+
+            let pass =
+                document.getElementById("nuevoPass").value;
+
+            let rol =
+                document.getElementById("nuevoRol").value;
+
+            if (!nombre || !pass) {
+                alert("Complete todos los campos");
+                return;
+            }
+
+            usuarios.push({
+
+                id: Date.now(),
+
+                name: nombre,
+
+                password: pass,
+
+                rol: rol,
+
+                permisos: {
+                    administrarLibros: false,
+                    administrarUsuarios: false,
+                    verReportes: false,
+                    reservar: true
+                },
+
+                historial: []
+            });
+
+            guardarTodo();
+
+            agregarBitacora(`Creó el usuario ${nombre}`);
+
+            renderUsuarios();
+        }
+
+        function eliminarUsuario(id) {
+
+            let eliminado = usuarios.find(u => u.id === id);
+
+            usuarios = usuarios.filter(u => u.id !== id);
+
+            guardarTodo();
+
+            agregarBitacora(`Eliminó el usuario ${eliminado.name}`);
+
+            renderUsuarios();
+        }
+
+        function togglePermiso(id, permiso) {
+
+            let user = usuarios.find(u => u.id === id);
+
+            user.permisos[permiso] = !user.permisos[permiso];
+
+            guardarTodo();
+        }
+
+        function renderLibros() {
+
+            let panel =
+                document.getElementById("panelLibros");
+
+            let cont =
+                document.getElementById("listaLibros");
+
+            cont.innerHTML = "";
+
+            if (usuarioActual.permisos.administrarLibros) {
+
+                panel.innerHTML = `
+
+                <button onclick="agregarLibro()"
+                    class="bg-green-600 hover:bg-green-700 transition text-white px-5 py-3 rounded-2xl shadow-lg mb-6">
+                    + Agregar Libro
+                </button>
+                `;
+
+            } else {
+                panel.innerHTML = "";
+            }
+
+            libros.forEach(l => {
+
+                cont.innerHTML += `
+
+                <div class="bg-white p-6 rounded-3xl shadow-lg hover:shadow-2xl transition border border-gray-100">
+
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                        ${l.titulo}
+                    </h2>
+
+                    <p class="text-gray-500">
+                        ${l.genero}
+                    </p>
+
+                    <p class="mt-3 text-sm inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                        Estado: ${l.estado}
+                    </p>
+
+                    <p class="mt-3 text-gray-600">
+                        Disponibles: ${l.disp}
+                    </p>
+
+                    <div class="mt-5 flex gap-3">
+
+                        ${usuarioActual.permisos.reservar ? `
+
+                        <button onclick="abrirModal(${l.id})"
+                            class="bg-yellow-500 hover:bg-yellow-600 transition text-white px-4 py-2 rounded-xl shadow">
+                            Reservar
+                        </button>
+
+                        ` : ""}
+
+                        ${usuarioActual.permisos.administrarLibros ? `
+
+                        <button onclick="eliminarLibro(${l.id})"
+                            class="bg-red-500 hover:bg-red-600 transition text-white px-4 py-2 rounded-xl shadow">
+                            Eliminar
+                        </button>
+
+                        ` : ""}
+
+                    </div>
+
+                </div>
+                `;
+            });
+        }
+
+        function agregarLibro() {
+
+            let titulo = prompt("Nombre del libro:");
+            let genero = prompt("Género:");
+
+            if (!titulo) return;
+
+            libros.push({
+
+                id: Date.now(),
+                titulo,
+                genero,
+                disp: 3,
+                estado: "Disponible"
+            });
+
+            guardarTodo();
+
+            agregarBitacora(`Agregó el libro ${titulo}`);
+
+            renderLibros();
+        }
+
+        function eliminarLibro(id) {
+
+            let eliminado = libros.find(l => l.id === id);
+
+            libros = libros.filter(l => l.id !== id);
+
+            guardarTodo();
+
+            agregarBitacora(`Eliminó el libro ${eliminado.titulo}`);
+
+            renderLibros();
+        }
+
+        function buscar() {
+
+            let txt =
+                document.getElementById("busqueda")
+                    .value.toLowerCase();
+
+            document.querySelectorAll("#listaLibros > div")
+                .forEach(div => {
+
+                    div.style.display =
+                        div.innerText.toLowerCase().includes(txt)
+                            ? "block"
+                            : "none";
+                });
+        }
+
+        function abrirModal(id) {
+
+            libroSel = id;
+
+            document.getElementById("modal")
+                .classList.remove("hidden");
+        }
+
+        function cerrarModal() {
+
+            document.getElementById("modal")
+                .classList.add("hidden");
+        }
+
+        function confirmarReserva() {
+
+            let inicio =
+                document.getElementById("fInicio").value;
+
+            let fin =
+                document.getElementById("fFin").value;
+
+            let libro =
+                libros.find(l => l.id === libroSel);
+
+            if (libro.disp <= 0) {
+                alert("Libro no disponible");
+                return;
+            }
+
+            libro.disp--;
+
+            if (libro.disp <= 0) {
+                libro.estado = "Prestado";
+            }
+
+            let reserva = {
+
+                usuario: usuarioActual.name,
+                libro: libro.titulo,
+                inicio,
+                fin
+            };
+
+            reservas.push(reserva);
+
+            let usuario = usuarios.find(u =>
+                u.name === usuarioActual.name
+            );
+
+            usuario.historial.push(reserva);
+
+            agregarNotificacion(
+                `Reserva confirmada: ${libro.titulo}`
+            );
+
+            agregarBitacora(`Reservó el libro ${libro.titulo}`);
+
+            guardarTodo();
+
+            cerrarModal();
+
+            render();
+        }
+
+        function devolverLibro(index) {
+
+            let reserva = reservas[index];
+
+            let libro = libros.find(l =>
+                l.titulo === reserva.libro
+            );
+
+            libro.disp++;
+
+            libro.estado = "Disponible";
+
+            agregarNotificacion(
+                `Devolución registrada: ${libro.titulo}`
+            );
+
+            agregarBitacora(`Devolvió el libro ${libro.titulo}`);
+
+            reservas.splice(index, 1);
+
+            guardarTodo();
+
+            render();
+        }
+
+        function renderPrestamos() {
+
+            let cont =
+                document.getElementById("tablaPrestamos");
+
+            cont.innerHTML = "";
+
+            usuarios.forEach(u => {
+
+                cont.innerHTML += `
+
+                <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 mb-5">
+
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">
+                        ${u.name}
+                    </h2>
+
+                    ${u.historial.length === 0
+                        ? `<p class="text-gray-500">No tiene préstamos.</p>`
+                        : ""}
+
+                    ${u.historial.map(h => `
+
+                        <div class="border p-4 rounded-2xl mb-3 bg-gray-50">
+
+                            <h3 class="font-bold text-lg text-gray-800">
+                                ${h.libro}
+                            </h3>
+
+                            <p class="mt-2 text-gray-600">
+                                Inicio: ${h.inicio}
+                            </p>
+
+                            <p class="text-gray-600">
+                                Fin: ${h.fin}
+                            </p>
+
+                            <button onclick="devolverLibro(${reservas.findIndex(r => r.libro === h.libro)})"
+                                class="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-xl mt-4 shadow">
+                                <i class="fa-solid fa-check"></i>
+                                Devolver
+                            </button>
+
+                        </div>
+
+                    `).join("")}
+
+                </div>
+                `;
+            });
+        }
+
+        function renderReportes() {
+
+            let cont =
+                document.getElementById("tablaReportes");
+
+            if (!usuarioActual.permisos.verReportes) {
+
+                cont.innerHTML = `
+                <div class="bg-red-100 text-red-700 p-5 rounded-2xl shadow">
+                    No tienes permisos para ver reportes.
+                </div>`;
+
+                return;
+            }
+
+            cont.innerHTML = `
+
+            <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-100">
+
+                <h2 class="text-2xl font-bold mb-5 text-gray-800">
+                    Reporte General
+                </h2>
+
+                <div class="grid md:grid-cols-3 gap-5">
+
+                    <div class="bg-amber-50 p-5 rounded-2xl">
+                        <p class="text-gray-500">Usuarios</p>
+                        <h2 class="text-3xl font-bold text-amber-700 mt-2">
+                            ${usuarios.length}
+                        </h2>
+                    </div>
+
+                    <div class="bg-blue-50 p-5 rounded-2xl">
+                        <p class="text-gray-500">Libros</p>
+                        <h2 class="text-3xl font-bold text-blue-700 mt-2">
+                            ${libros.length}
+                        </h2>
+                    </div>
+
+                    <div class="bg-green-50 p-5 rounded-2xl">
+                        <p class="text-gray-500">Préstamos</p>
+                        <h2 class="text-3xl font-bold text-green-700 mt-2">
+                            ${reservas.length}
+                        </h2>
+                    </div>
+
+                </div>
+
+            </div>
+            `;
+        }
+
+        function renderBitacora() {
+
+            let cont = document.getElementById("tablaBitacora");
+
+            cont.innerHTML = "";
+
+            bitacora.forEach(b => {
+
+                cont.innerHTML += `
+
+                <div class="bg-white p-5 rounded-2xl shadow-lg border border-gray-100 mb-3">
+
+                    <div class="flex justify-between items-center">
+
+                        <div>
+
+                            <h3 class="font-bold text-gray-800 text-lg">
+                                ${b.usuario}
+                            </h3>
+
+                            <p class="text-gray-600 mt-1">
+                                ${b.accion}
+                            </p>
+
+                        </div>
+
+                        <span class="text-xs text-gray-400">
+                            ${b.fecha}
+                        </span>
+
+                    </div>
+
+                </div>
+                `;
+            });
+        }
+
+        function render() {
+
+            renderDashboard();
+            renderUsuarios();
+            renderLibros();
+            renderPrestamos();
+            renderReportes();
+            renderNotificaciones();
+            renderBitacora();
+        }
+
+    </script>
+
+</body>
+
+</html>
+```
