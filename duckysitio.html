@@ -254,12 +254,96 @@
 
     </div>
 
+    <!-- MODAL DETALLE LIBRO -->
+    <div id="modalLibro" class="hidden fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+
+        <div class="bg-white w-[800px] p-8 rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
+
+            <div id="contenidoLibro"></div>
+
+            <button onclick="cerrarDetalleLibro()"
+                class="bg-gray-500 hover:bg-gray-600 transition text-white px-5 py-2 rounded-xl mt-5">
+
+                Cerrar
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- CHATBOT -->
+    <div class="fixed bottom-6 right-6 z-50">
+
+        <button onclick="toggleChatbot()"
+            class="bg-amber-600 hover:bg-amber-700 transition text-white w-16 h-16 rounded-full shadow-2xl text-2xl">
+
+            <i class="fa-solid fa-robot"></i>
+
+        </button>
+
+    </div>
+
+    <!-- VENTANA CHAT -->
+    <div id="chatbot"
+        class="hidden fixed bottom-24 right-6 w-96 bg-white rounded-3xl shadow-2xl overflow-hidden z-50 border border-gray-200">
+
+        <div class="bg-amber-600 text-white p-4">
+
+            <h2 class="font-bold text-lg flex items-center gap-2">
+
+                <i class="fa-solid fa-robot"></i>
+
+                DuckyBot
+
+            </h2>
+
+            <p class="text-sm opacity-80">
+                Asistente virtual de biblioteca
+            </p>
+
+        </div>
+
+        <div id="chatMensajes" class="h-96 overflow-y-auto p-4 bg-gray-50">
+
+            <div class="bg-white p-3 rounded-2xl shadow mb-3 max-w-[80%]">
+
+                ¡Hola! 👋
+                Soy DuckyBot.
+                ¿En qué puedo ayudarte?
+
+            </div>
+
+        </div>
+
+        <div class="flex border-t">
+
+            <input id="inputChat" placeholder="Escribe un mensaje..." class="flex-1 p-4 outline-none">
+
+            <button onclick="enviarMensaje()" class="bg-amber-600 hover:bg-amber-700 transition text-white px-5">
+
+                <i class="fa-solid fa-paper-plane"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
     <script>
 
         let libros = JSON.parse(localStorage.getItem("libros")) || [
             {
                 id: 1,
                 titulo: "Clean Code",
+                autor: "Robert C. Martin",
+                editorial: "Prentice Hall",
+                anio: 2008,
+                isbn: "978-0132350884",
+                paginas: 464,
+                precio: "$850",
+                ubicacion: "Pasillo 3 - Estante B",
+                sinopsis: "Guía para escribir código limpio y mantenible.",
                 genero: "Programación",
                 disp: 3,
                 estado: "Disponible"
@@ -267,17 +351,115 @@
             {
                 id: 2,
                 titulo: "Design Patterns",
+                autor: "Erich Gamma",
+                editorial: "Addison-Wesley",
+                anio: 1994,
+                isbn: "978-0201633610",
+                paginas: 395,
+                precio: "$920",
+                ubicacion: "Pasillo 2 - Estante A",
+                sinopsis: "Libro clásico sobre patrones de diseño orientados a objetos y soluciones reutilizables.",
                 genero: "Software",
                 disp: 2,
                 estado: "Disponible"
             },
+
             {
                 id: 3,
                 titulo: "Refactoring",
+                autor: "Martin Fowler",
+                editorial: "Addison-Wesley",
+                anio: 2018,
+                isbn: "978-0134757599",
+                paginas: 448,
+                precio: "$780",
+                ubicacion: "Pasillo 4 - Estante C",
+                sinopsis: "Explica técnicas para mejorar la estructura interna del código sin alterar su funcionamiento.",
                 genero: "Tecnología",
                 disp: 1,
                 estado: "Disponible"
+            },
+
+            {
+                id: 4,
+                titulo: "Introduction to Algorithms",
+                autor: "Thomas H. Cormen",
+                editorial: "MIT Press",
+                anio: 2009,
+                isbn: "978-0262033848",
+                paginas: 1312,
+                precio: "$1200",
+                ubicacion: "Pasillo 1 - Estante D",
+                sinopsis: "Referencia completa sobre estructuras de datos, algoritmos y análisis computacional.",
+                genero: "Algoritmos",
+                disp: 4,
+                estado: "Disponible"
+            },
+
+            {
+                id: 5,
+                titulo: "The Pragmatic Programmer",
+                autor: "Andrew Hunt",
+                editorial: "Addison-Wesley",
+                anio: 2019,
+                isbn: "978-0135957059",
+                paginas: 352,
+                precio: "$690",
+                ubicacion: "Pasillo 3 - Estante F",
+                sinopsis: "Consejos prácticos para mejorar habilidades de programación y desarrollo profesional.",
+                genero: "Programación",
+                disp: 5,
+                estado: "Disponible"
+            },
+
+            {
+                id: 6,
+                titulo: "Artificial Intelligence: A Modern Approach",
+                autor: "Stuart Russell",
+                editorial: "Pearson",
+                anio: 2021,
+                isbn: "978-0134610993",
+                paginas: 1136,
+                precio: "$1450",
+                ubicacion: "Pasillo 5 - Estante B",
+                sinopsis: "Libro fundamental sobre inteligencia artificial, aprendizaje automático y agentes inteligentes.",
+                genero: "Inteligencia Artificial",
+                disp: 2,
+                estado: "Disponible"
+            },
+
+            {
+                id: 7,
+                titulo: "Computer Networks",
+                autor: "Andrew S. Tanenbaum",
+                editorial: "Pearson",
+                anio: 2010,
+                isbn: "978-0132126953",
+                paginas: 960,
+                precio: "$980",
+                ubicacion: "Pasillo 6 - Estante A",
+                sinopsis: "Explicación detallada de redes de computadoras, protocolos y arquitectura de internet.",
+                genero: "Redes",
+                disp: 3,
+                estado: "Disponible"
+            },
+
+            {
+                id: 8,
+                titulo: "Database System Concepts",
+                autor: "Abraham Silberschatz",
+                editorial: "McGraw-Hill",
+                anio: 2019,
+                isbn: "978-0078022159",
+                paginas: 1376,
+                precio: "$1100",
+                ubicacion: "Pasillo 4 - Estante E",
+                sinopsis: "Fundamentos de bases de datos relacionales, SQL, transacciones y diseño de sistemas.",
+                genero: "Bases de Datos",
+                disp: 2,
+                estado: "Disponible"
             }
+
         ];
 
         let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [
@@ -449,6 +631,113 @@
 
             document.getElementById("panelNotif")
                 .classList.toggle("hidden");
+        }
+
+        function toggleChatbot() {
+
+            document.getElementById("chatbot")
+                .classList.toggle("hidden");
+        }
+
+        function enviarMensaje() {
+
+            let input =
+                document.getElementById("inputChat");
+
+            let texto = input.value.trim();
+
+            if (texto === "") return;
+
+            let chat =
+                document.getElementById("chatMensajes");
+
+            /* MENSAJE USUARIO */
+            chat.innerHTML += `
+
+    <div class="flex justify-end mb-3">
+
+        <div class="bg-amber-500 text-white p-3 rounded-2xl max-w-[80%] shadow">
+
+            ${texto}
+
+        </div>
+
+    </div>
+    `;
+
+            let respuesta = responderChatbot(texto);
+
+            /* RESPUESTA BOT */
+            setTimeout(() => {
+
+                chat.innerHTML += `
+
+        <div class="bg-white p-3 rounded-2xl shadow mb-3 max-w-[80%]">
+
+            ${respuesta}
+
+        </div>
+        `;
+
+                chat.scrollTop = chat.scrollHeight;
+
+            }, 500);
+
+            input.value = "";
+
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function responderChatbot(msg) {
+
+            msg = msg.toLowerCase();
+
+            if (msg.includes("hola")) {
+
+                return "¡Hola! 😊 ¿Necesitas ayuda con préstamos, reservas o reportes?";
+            }
+
+            if (msg.includes("reservar")) {
+
+                return "Puedes reservar un libro entrando al catálogo y presionando el botón 'Reservar'.";
+            }
+
+            if (msg.includes("devolver")) {
+
+                return "La devolución puede realizarse desde la sección de préstamos.";
+            }
+
+            if (msg.includes("multa")) {
+
+                return "Las multas se generan automáticamente cuando se excede la fecha de devolución.";
+            }
+
+            if (msg.includes("horario")) {
+
+                return "La biblioteca abre de lunes a viernes de 7:00 AM a 9:00 PM.";
+            }
+
+            if (msg.includes("ubicacion")) {
+
+                return "La biblioteca se encuentra en el edificio principal de Ducky University.";
+            }
+
+            if (msg.includes("contacto")) {
+
+                return "Puedes contactar a biblioteca@ducky.edu";
+            }
+
+            if (msg.includes("prestamo")) {
+
+                return "Puedes consultar tus préstamos en la sección 'Préstamos'.";
+            }
+
+            if (msg.includes("gracias")) {
+
+                return "¡Con gusto! 😊";
+            }
+
+            return "Lo siento, todavía estoy aprendiendo 😭. Intenta preguntarme sobre préstamos, reservas o multas.";
         }
 
         function mostrar(sec) {
@@ -711,7 +1000,12 @@
                     </p>
 
                     <div class="mt-5 flex gap-3">
+                        <button onclick="verDetalleLibro(${l.id})"
+class="bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-xl shadow">
 
+    Ver Detalles
+
+</button>
                         ${usuarioActual.permisos.reservar ? `
 
                         <button onclick="abrirModal(${l.id})"
@@ -739,23 +1033,80 @@
 
         function agregarLibro() {
 
-            let titulo = prompt("Nombre del libro:");
-            let genero = prompt("Género:");
+            let titulo =
+                prompt("Nombre del libro:");
 
             if (!titulo) return;
+
+            let autor =
+                prompt("Autor del libro:");
+
+            let editorial =
+                prompt("Editorial:");
+
+            let anio =
+                prompt("Año de publicación:");
+
+            let isbn =
+                prompt("ISBN:");
+
+            let paginas =
+                prompt("Número de páginas:");
+
+            let precio =
+                prompt("Precio:");
+
+            let ubicacion =
+                prompt("Ubicación en biblioteca:");
+
+            let sinopsis =
+                prompt("Sinopsis:");
+
+            let genero =
+                prompt("Género:");
+
+            let disponibles =
+                prompt("Cantidad disponible:");
 
             libros.push({
 
                 id: Date.now(),
-                titulo,
-                genero,
-                disp: 3,
+
+                titulo: titulo,
+
+                autor: autor,
+
+                editorial: editorial,
+
+                anio: anio,
+
+                isbn: isbn,
+
+                paginas: paginas,
+
+                precio: precio,
+
+                ubicacion: ubicacion,
+
+                sinopsis: sinopsis,
+
+                genero: genero,
+
+                disp: parseInt(disponibles),
+
                 estado: "Disponible"
+
             });
 
             guardarTodo();
 
-            agregarBitacora(`Agregó el libro ${titulo}`);
+            agregarBitacora(
+                `Agregó el libro ${titulo}`
+            );
+
+            agregarNotificacion(
+                `Nuevo libro agregado: ${titulo}`
+            );
 
             renderLibros();
         }
@@ -800,6 +1151,127 @@
         function cerrarModal() {
 
             document.getElementById("modal")
+                .classList.add("hidden");
+        }
+
+        function verDetalleLibro(id) {
+
+            let libro = libros.find(l => l.id === id);
+
+            let cont =
+                document.getElementById("contenidoLibro");
+
+            cont.innerHTML = `
+
+    <div>
+
+        <div class="flex justify-between items-start mb-5">
+
+            <div>
+
+                <h1 class="text-4xl font-bold text-gray-800">
+                    ${libro.titulo}
+                </h1>
+
+                <p class="text-xl text-gray-600 mt-2">
+                    ${libro.autor}
+                </p>
+
+                <p class="text-gray-500 mt-1">
+                    ${libro.anio}
+                </p>
+
+            </div>
+
+            <div class="text-right">
+
+                <span class="bg-yellow-400 text-black px-4 py-2 rounded-full font-semibold">
+                    ${libro.genero}
+                </span>
+
+            </div>
+
+        </div>
+
+        <hr class="mb-6">
+
+        <h2 class="font-bold text-xl mb-3 text-gray-800">
+            Sinopsis
+        </h2>
+
+        <p class="text-gray-700 leading-relaxed mb-8">
+            ${libro.sinopsis}
+        </p>
+
+        <hr class="mb-6">
+
+        <h2 class="font-bold text-xl mb-4 text-gray-800">
+            Información adicional
+        </h2>
+
+        <div class="grid grid-cols-2 gap-4 text-gray-700">
+
+            <div>
+                <b>Editorial:</b> ${libro.editorial}
+            </div>
+
+            <div>
+                <b>Edición:</b> 1° Edición
+            </div>
+
+            <div>
+                <b>Número de páginas:</b> ${libro.paginas}
+            </div>
+
+            <div>
+                <b>Precio:</b> ${libro.precio}
+            </div>
+
+            <div>
+                <b>ISBN:</b> ${libro.isbn}
+            </div>
+
+            <div>
+                <b>Ubicación:</b> ${libro.ubicacion}
+            </div>
+
+        </div>
+
+        <hr class="my-6">
+
+        <h2 class="font-bold text-xl mb-4 text-gray-800">
+            Disponibilidad
+        </h2>
+
+        <div class="space-y-2 text-gray-700">
+
+            <p>
+                <b>Total de libros:</b> ${libro.disp}
+            </p>
+
+            <p>
+                <b>Estado:</b> ${libro.estado}
+            </p>
+
+        </div>
+
+        <button onclick="abrirModal(${libro.id})"
+        class="bg-green-600 hover:bg-green-700 transition text-white px-5 py-3 rounded-xl mt-8 shadow-lg">
+
+            Reservar Libro
+
+        </button>
+
+    </div>
+    `;
+
+            document.getElementById("modalLibro")
+                .classList.remove("hidden");
+        }
+
+        function cerrarDetalleLibro() {
+
+            document.getElementById("modalLibro")
                 .classList.add("hidden");
         }
 
